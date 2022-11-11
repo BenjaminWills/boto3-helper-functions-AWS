@@ -1,4 +1,8 @@
+import logging
+
 import boto3
+from botocore.exceptions import ClientError
+
 
 
 class S3:
@@ -29,7 +33,8 @@ class S3:
                     Bucket = bucket_name,
                     CreateBucketConfiguration = location
                 )
-        except:
+        except ClientError as e:
+            logging.error(e)
             return False
         return True
     
@@ -42,7 +47,8 @@ class S3:
                 s3_client.delete_bucket(Bucket=bucket_name)
             else:
                 return False
-        except:
+        except ClientError as e:
+            logging.error(e)
             return False
         return True
 
@@ -51,7 +57,8 @@ class S3:
             s3_client = self.client
             bucket = s3_client.Bucket(bucket_name)
             bucket.upload_file(file_path,file_name)
-        except:
+        except ClientError as e:
+            logging.error(e)
             return False
         return True
 
@@ -63,7 +70,8 @@ class S3:
                 file.key 
                 for file in bucket.objects.all()
                 ]
-        except:
+        except ClientError as e:
+            logging.error(e)
             return False
         return contents
     
@@ -72,17 +80,22 @@ class S3:
             s3_resource = self.resource
             target = s3_resource.Object(bucket_name,file_name)
             target.delete()
-        except:
+        except ClientError as e:
+            logging.error(e)
             return False
         return True
     
     def list_s3_buckets(self,verbose:bool = True) -> list:
-        s3 = self.client
-        buckets = s3.list_buckets()['Buckets']
-        if verbose:
-            print('-'*60)
-            print('Bucket names:')
-            for index,bucket in enumerate(buckets):
-                print(f'{index+1} : ',bucket['Name'])
-            print('-'*60)
-        return buckets
+        try:
+            s3 = self.client
+            buckets = s3.list_buckets()['Buckets']
+            if verbose:
+                print('-'*60)
+                print('Bucket names:')
+                for index,bucket in enumerate(buckets):
+                    print(f'{index+1} : ',bucket['Name'])
+                print('-'*60)
+            return buckets
+        except ClientError as e:
+            logging.error(e)
+            return False
