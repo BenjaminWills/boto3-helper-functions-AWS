@@ -15,7 +15,7 @@ class Cloudformation:
         stack_name:str,
         config_path:str,
         parameters:List[dict],
-    ):
+    ) -> bool:
         try:
             self.cloud_formation.create_stack(
                 StackName = stack_name,
