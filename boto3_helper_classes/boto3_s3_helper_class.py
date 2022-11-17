@@ -9,16 +9,18 @@ class S3:
     """
     A helper class for boto3 s3 operations.
     """
-    def __init__(self,ACCESS_KEY_ID:str,SECRET_ACCESS_KEY:str) -> None:
+    def __init__(self,ACCESS_KEY_ID:str,SECRET_ACCESS_KEY:str, region_name:str) -> None:
         self.client = boto3.client(
                 's3',
                 aws_access_key_id = ACCESS_KEY_ID,
                 aws_secret_access_key = SECRET_ACCESS_KEY,
+                region_name = region_name
                 )
         self.resource = boto3.resource(
                 's3',
                 aws_access_key_id = ACCESS_KEY_ID,
                 aws_secret_access_key = SECRET_ACCESS_KEY,
+                region_name = region_name
                 )
     
     def create_bucket(self,bucket_name:str,region:str = None) -> bool:
